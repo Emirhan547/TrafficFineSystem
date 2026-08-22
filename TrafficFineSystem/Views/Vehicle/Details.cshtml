@@ -1,0 +1,60 @@
+﻿@model VehicleListDto
+
+@{
+    ViewData["Title"] = "Araç Detayı";
+}
+
+<h2>Araç Detayı</h2>
+
+<div class="card">
+    <div class="card-body">
+
+        <dl class="row">
+
+            <dt class="col-sm-3">
+                Plaka
+            </dt>
+
+            <dd class="col-sm-9">
+                @Model.Plate
+            </dd>
+
+            <dt class="col-sm-3">
+                Araç Tipi
+            </dt>
+
+            <dd class="col-sm-9">
+                @Model.VehicleType
+            </dd>
+
+            <dt class="col-sm-3">
+                Marka
+            </dt>
+
+            <dd class="col-sm-9">
+                @Model.Brand
+            </dd>
+
+            <dt class="col-sm-3">
+                Model
+            </dt>
+
+            <dd class="col-sm-9">
+                @Model.Model
+            </dd>
+
+        </dl>
+
+        <a asp-action="Edit"
+           asp-route-id="@Model.Id"
+           class="btn btn-warning">
+            Düzenle
+        </a>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Listeye Dön
+        </a>
+
+    </div>
+</div>

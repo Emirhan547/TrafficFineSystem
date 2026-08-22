@@ -1,0 +1,56 @@
+﻿@model List<VehicleListDto>
+
+@{
+    ViewData["Title"] = "Araçlar";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Araçlar</h2>
+
+    <a asp-action="Create" class="btn btn-primary">
+        Yeni Araç
+    </a>
+</div>
+
+@if (TempData["Success"] is not null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Plaka</th>
+            <th>Araç Tipi</th>
+            <th>Marka</th>
+            <th>Model</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var vehicle in Model)
+        {
+            <tr>
+                <td>@vehicle.Plate</td>
+                <td>@vehicle.VehicleType</td>
+                <td>@vehicle.Brand</td>
+                <td>@vehicle.Model</td>
+                <td>
+                    <a asp-action="Details"
+                       asp-route-id="@vehicle.Id"
+                       class="btn btn-sm btn-info">
+                        Detay
+                    </a>
+
+                    <a asp-action="Edit"
+                       asp-route-id="@vehicle.Id"
+                       class="btn btn-sm btn-warning">
+                        Düzenle
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
