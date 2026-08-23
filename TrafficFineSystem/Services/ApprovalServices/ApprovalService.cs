@@ -8,33 +8,36 @@ using TrafficFineSystem.Dtos.TrafficFineDtos;
 
 namespace TrafficFineSystem.Services.ApprovalHistoryServices
 {
-    public class ApprovalHistoryService : IApprovalHistoryService
+    public class ApprovalService : IApprovalService
     {
-        private readonly IApprovalHistoryRepository _approvalHistoryRepository;
+        private readonly IApprovalRepository _approvalHistoryRepository;
         private readonly ITrafficFineRepository _trafficFineRepository;
 
-        public ApprovalHistoryService(ITrafficFineRepository trafficFineRepository,IApprovalHistoryRepository approvalHistoryRepository)
+        public ApprovalService(ITrafficFineRepository trafficFineRepository, IApprovalRepository approvalHistoryRepository)
         {
             _trafficFineRepository = trafficFineRepository;
            
             _approvalHistoryRepository = approvalHistoryRepository;
         }
 
-        public async Task<bool> ApproveAsync(ApprovalDto dto, int userId)
+        public async Task<bool> ApproveAsync(ApproveTrafficFineDto dto,int userId,string role)
         {
             var trafficFine =await _trafficFineRepository.GetByIdAsync(dto.TrafficFineId);
-
-            if (trafficFine is null)
-                return false;
-
             var previousStatus = trafficFine.Status;
-            if (trafficFine.Status == FineStatus.New)
+
+            if (role == "Manager")
             {
-                trafficFine.Status =FineStatus.ManagerApproved;
+                if (trafficFine.Status != FineStatus.New)
+                    return false;
+
+                trafficFine.Status = FineStatus.ManagerApproved;
             }
-            else if (trafficFine.Status == FineStatus.ManagerApproved)
+            else if (role == "Finance")
             {
-                trafficFine.Status =FineStatus.Completed;
+                if (trafficFine.Status != FineStatus.ManagerApproved)
+                    return false;
+
+                trafficFine.Status = FineStatus.Completed;
             }
             else
             {
@@ -45,7 +48,7 @@ namespace TrafficFineSystem.Services.ApprovalHistoryServices
             {
                 TrafficFineId = trafficFine.Id,
                 UserId = userId,
-                Action = "Approve",
+                Action = ApprovalAction.Approved,
                 PreviousStatus = previousStatus.ToString(),
                 NewStatus = trafficFine.Status.ToString(),
                 Description = dto.Description,
@@ -54,9 +57,7 @@ namespace TrafficFineSystem.Services.ApprovalHistoryServices
 
             await _approvalHistoryRepository.AddAsync(history);
 
-            _trafficFineRepository.Update(trafficFine);
-
-           
+            await _trafficFineRepository.Update(trafficFine);
 
             return true;
         }
@@ -75,15 +76,21 @@ namespace TrafficFineSystem.Services.ApprovalHistoryServices
             }).ToList();
         }
 
-        public async Task<bool> RejectAsync(ApprovalDto dto,int userId)
+        public async Task<bool> RejectAsync(RejectTrafficFineDto dto,int userId,string role)
         {
             var trafficFine =await _trafficFineRepository.GetByIdAsync(dto.TrafficFineId);
 
-            if (trafficFine is null)
-                return false;
-
-            if (trafficFine.Status != FineStatus.New &&
-                trafficFine.Status != FineStatus.ManagerApproved)
+            if (role == "Manager")
+            {
+                if (trafficFine.Status != FineStatus.New)
+                    return false;
+            }
+            else if (role == "Finance")
+            {
+                if (trafficFine.Status != FineStatus.ManagerApproved)
+                    return false;
+            }
+            else
             {
                 return false;
             }
@@ -94,21 +101,20 @@ namespace TrafficFineSystem.Services.ApprovalHistoryServices
             {
                 TrafficFineId = trafficFine.Id,
                 UserId = userId,
-                Action = "Reject",
+                Action = ApprovalAction.Rejected,
                 PreviousStatus = previousStatus.ToString(),
                 NewStatus = trafficFine.Status.ToString(),
                 Description = dto.Description,
                 CreatedAt = DateTime.Now
             };
             await _approvalHistoryRepository.AddAsync(history);
-            _trafficFineRepository.Update(trafficFine);
+            await _trafficFineRepository.Update(trafficFine);
+
             return true;
         }
         public async Task<List<TrafficFineListDto>> GetAllTrafficFinesAsync()
         {
-            var trafficFines =
-                await _trafficFineRepository.GetAllWithVehiclesAsync();
-
+            var trafficFines =await _trafficFineRepository.GetAllWithVehiclesAsync();
             return trafficFines.Select(x => new TrafficFineListDto
             {
                 Id = x.Id,
@@ -117,6 +123,29 @@ namespace TrafficFineSystem.Services.ApprovalHistoryServices
                 FineDate = x.FineDate,
                 Status = x.Status
             }).ToList();
+        }
+        public async Task<List<VehicleTrafficFineDto>> GetAllGroupedAsync()
+        {
+            var trafficFines =await _trafficFineRepository.GetAllWithVehiclesAsync();
+
+            return trafficFines.GroupBy(x => x.VehicleId)
+                .Select(group => new VehicleTrafficFineDto
+                {
+                    VehicleId = group.Key,
+                    Plate = group.First().Vehicle.Plate,
+                    Brand = group.First().Vehicle.Brand,
+                    Model = group.First().Vehicle.Model,
+
+                    TrafficFines = group.Select(x => new TrafficFineListDto
+                    {
+                        Id = x.Id,
+                        Plate = x.Vehicle.Plate,
+                        Amount = x.Amount,
+                        FineDate = x.FineDate,
+                        Status = x.Status
+                    }).ToList()
+                })
+                .ToList();
         }
     }
 }

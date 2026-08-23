@@ -11,18 +11,12 @@ namespace TrafficFineSystem.Data.Repositories.VehicleRepositories
         }
         public async Task<bool> PlateExistsAsync(string plate)
         {
-            return await _dbSet
-                .AnyAsync(x => x.Plate == plate);
+            return await _dbSet .AnyAsync(x => x.Plate == plate);
         }
 
-        public async Task<bool> PlateExistsAsync(
-            string plate,
-            int excludedVehicleId)
+        public async Task<bool> PlateExistsAsync(string plate,int excludedVehicleId)
         {
-            return await _dbSet
-                .AnyAsync(x =>
-                    x.Plate == plate &&
-                    x.Id != excludedVehicleId);
+            return await _dbSet.AnyAsync(x => x.Plate == plate &&x.Id != excludedVehicleId);
         }
     }
 }

@@ -17,13 +17,12 @@ namespace TrafficFineSystem.Services.VehicleServices
 
         public async Task CreateAsync(CreateVehicleDto dto)
         {
-            var plateExists =
-                await _vehicleRepository.PlateExistsAsync(dto.Plate);
+            var plateExists =await _vehicleRepository.PlateExistsAsync(dto.Plate);
 
             if (plateExists)
-                throw new InvalidOperationException(
-                    "Bu plakaya sahip bir araç zaten mevcut.");
-
+            {
+                throw new InvalidOperationException("Bu plakaya sahip bir araç zaten mevcut.");
+            } 
             var vehicle = new Vehicle
             {
                 Plate = dto.Plate,
@@ -31,7 +30,6 @@ namespace TrafficFineSystem.Services.VehicleServices
                 Brand = dto.Brand,
                 Model = dto.Model
             };
-
             await _vehicleRepository.AddAsync(vehicle);
 
            
@@ -40,7 +38,6 @@ namespace TrafficFineSystem.Services.VehicleServices
         public async Task<List<VehicleListDto>> GetAllAsync()
         {
             var vehicles = await _vehicleRepository.GetAllAsync();
-
             return vehicles.Select(vehicle => new VehicleListDto
             {
                 Id = vehicle.Id,
@@ -54,9 +51,6 @@ namespace TrafficFineSystem.Services.VehicleServices
         public async Task<VehicleListDto?> GetByIdAsync(int id)
         {
             var vehicle = await _vehicleRepository.GetByIdAsync(id);
-
-            if (vehicle is null)
-                return null;
 
             return new VehicleListDto
             {
@@ -72,9 +66,6 @@ namespace TrafficFineSystem.Services.VehicleServices
         {
             var vehicle = await _vehicleRepository.GetByIdAsync(id);
 
-            if (vehicle is null)
-                return null;
-
             return new UpdateVehicleDto
             {
                 Id = vehicle.Id,
@@ -87,21 +78,14 @@ namespace TrafficFineSystem.Services.VehicleServices
 
         public async Task<bool> UpdateAsync(UpdateVehicleDto dto)
         {
-            var vehicle =
-                await _vehicleRepository.GetByIdAsync(dto.Id);
+            var vehicle =await _vehicleRepository.GetByIdAsync(dto.Id);
 
-            if (vehicle is null)
-                return false;
-
-            var plateExists =
-                await _vehicleRepository.PlateExistsAsync(
-                    dto.Plate,
-                    dto.Id);
+            var plateExists =await _vehicleRepository.PlateExistsAsync(dto.Plate,dto.Id);
 
             if (plateExists)
-                throw new InvalidOperationException(
-                    "Bu plakaya sahip başka bir araç zaten mevcut.");
-
+            {
+                throw new InvalidOperationException("Bu plakaya sahip başka bir araç zaten mevcut.");
+            }             
             vehicle.Plate = dto.Plate;
             vehicle.VehicleType = dto.VehicleType;
             vehicle.Brand = dto.Brand;

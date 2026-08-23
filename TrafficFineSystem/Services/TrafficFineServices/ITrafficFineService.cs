@@ -10,6 +10,7 @@ namespace TrafficFineSystem.Services.TrafficFineServices
         Task<UpdateTrafficFineDto?> GetForUpdateAsync(int id);
         Task<List<VehicleListDto>> GetVehiclesAsync();
         Task CreateAsync(CreateTrafficFineDto dto);
-        Task<bool> UpdateAsync(UpdateTrafficFineDto dto);
+        Task <bool>UpdateAsync(UpdateTrafficFineDto dto);
+        Task<List<VehicleTrafficFineDto>> GetAllGroupedAsync();
     }
 }

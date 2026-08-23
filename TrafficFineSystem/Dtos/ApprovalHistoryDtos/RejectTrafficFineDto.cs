@@ -1,9 +1,9 @@
 ﻿namespace TrafficFineSystem.Dtos.ApprovalHistoryDtos
 {
-    public class ApprovalDto
+    public class RejectTrafficFineDto
     {
         public int TrafficFineId { get; set; }
 
-        public string? Description { get; set; }
+        public string Description { get; set; } 
     }
 }

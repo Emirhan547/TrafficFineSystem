@@ -42,57 +42,42 @@
 
         </dl>
 
-        <a asp-action="Edit"
-           asp-route-id="@Model.Id"
-           class="btn btn-warning">
-            Düzenle
-        </a>
+        @if (Model.Status == TrafficFineSystem.Data.Enums.FineStatus.New)
+        {
+            <a asp-action="Edit"asp-route-id="@Model.Id"class="btn btn-warning">Düzenle</a>
+        }
 
-        <a asp-action="Index"
-           class="btn btn-secondary">
-            Listeye Dön
-        </a>
+        <a asp-action="Index"class="btn btn-secondary">Listeye Dön</a>
 
-        <a asp-controller="Approval"
-           asp-action="History"
-           asp-route-trafficFineId="@Model.Id"
-           class="btn btn-outline-secondary">
-            Onay Geçmişi
-        </a>
+        <a asp-controller="Approval"asp-action="History" asp-route-trafficFineId="@Model.Id"class="btn btn-outline-secondary">Onay Geçmişi</a>
 
     </div>
 </div>
 
-@if (User.IsInRole("Manager") &&
-     Model.Status == TrafficFineSystem.Data.Enums.FineStatus.New)
+@if (User.IsInRole("Manager") && Model.Status == TrafficFineSystem.Data.Enums.FineStatus.New)
 {
     <div class="card mt-4">
         <div class="card-body">
 
             <h5>Yönetici Onayı</h5>
 
-            <form asp-controller="Approval"
-                  asp-action="Approve"
-                  method="post"
-                  class="d-inline">
+            <form asp-controller="Approval" asp-action="Approve"method="post">
 
-                <input type="hidden"
-                       name="TrafficFineId"
-                       value="@Model.Id" />
+                <input type="hidden" name="TrafficFineId"value="@Model.Id" />
 
-                <button type="submit"
-                        class="btn btn-success">
-                    Onayla
-                </button>
+                <div class="mb-3">
+                    <label class="form-label">Açıklama
+                        <span class="text-muted">(Opsiyonel)</span>
+                    </label>
+
+                    <textarea name="Description"class="form-control"rows="3"placeholder="Onay ile ilgili bir açıklama yazabilirsiniz."></textarea>
+                </div>
+
+                <button type="submit"class="btn btn-success">Onayla </button>
+
+                <button type="button"class="btn btn-danger"data-bs-toggle="modal"data-bs-target="#rejectModal">Reddet</button>
 
             </form>
-
-            <button type="button"
-                    class="btn btn-danger"
-                    data-bs-toggle="modal"
-                    data-bs-target="#rejectModal">
-                Reddet
-            </button>
 
         </div>
     </div>
@@ -106,72 +91,49 @@
 
             <h5>Finans Onayı</h5>
 
-            <form asp-controller="Approval"
-                  asp-action="Approve"
-                  method="post"
-                  class="d-inline">
+            <form asp-controller="Approval"asp-action="Approve"method="post">
 
-                <input type="hidden"
-                       name="TrafficFineId"
-                       value="@Model.Id" />
+                <input type="hidden"name="TrafficFineId"value="@Model.Id" />
 
-                <button type="submit"
-                        class="btn btn-success">
-                    Onayla
-                </button>
+                <div class="mb-3">
+                    <label class="form-label"> Açıklama<span class="text-muted">(Opsiyonel)</span> </label>
+
+                    <textarea name="Description"class="form-control"rows="3"placeholder="Onay ile ilgili bir açıklama yazabilirsiniz."></textarea>
+                </div>
+
+                <button type="submit"class="btn btn-success">Onayla </button>
+
+                <button type="button"class="btn btn-danger"data-bs-toggle="modal"data-bs-target="#rejectModal"> Reddet </button>
 
             </form>
-
-            <button type="button"
-                    class="btn btn-danger"
-                    data-bs-toggle="modal"
-                    data-bs-target="#rejectModal">
-                Reddet
-            </button>
 
         </div>
     </div>
 }
 
-<div class="modal fade"
-     id="rejectModal"
-     tabindex="-1"
-     aria-hidden="true">
+<div class="modal fade"id="rejectModal"tabindex="-1"aria-hidden="true">
 
     <div class="modal-dialog">
 
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">
-                    Trafik Cezasını Reddet
-                </h5>
+                <h5 class="modal-title">Trafik Cezasını Reddet</h5>
 
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                </button>
+                <button type="button"class="btn-close"data-bs-dismiss="modal"></button>
             </div>
 
-            <form asp-controller="Approval"
-                  asp-action="Reject"
-                  method="post">
+            <form asp-controller="Approval"asp-action="Reject"method="post">
 
                 <div class="modal-body">
 
-                    <input type="hidden"
-                           name="TrafficFineId"
-                           value="@Model.Id" />
+                    <input type="hidden" name="TrafficFineId"value="@Model.Id" />
 
                     <div class="mb-3">
 
-                        <label class="form-label">
-                            Ret Nedeni
-                        </label>
+                        <label class="form-label">Ret Nedeni</label>
 
-                        <textarea name="Description"
-                                  class="form-control"
-                                  rows="4"></textarea>
+                        <textarea name="Description"class="form-control"rows="4"></textarea>
 
                     </div>
 
@@ -179,16 +141,9 @@
 
                 <div class="modal-footer">
 
-                    <button type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        Vazgeç
-                    </button>
+                    <button type="button" class="btn btn-secondary"data-bs-dismiss="modal">Vazgeç</button>
 
-                    <button type="submit"
-                            class="btn btn-danger">
-                        Reddet
-                    </button>
+                    <button type="submit"class="btn btn-danger"> Reddet </button>
 
                 </div>
 

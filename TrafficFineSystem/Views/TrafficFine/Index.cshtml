@@ -1,4 +1,4 @@
-﻿@model List<TrafficFineListDto>
+﻿@model List<VehicleTrafficFineDto>
 
 @{
     ViewData["Title"] = "Trafik Cezaları";
@@ -7,17 +7,10 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Trafik Cezaları</h2>
 
-    <a asp-action="Create" class="btn btn-primary">
-        Yeni Trafik Cezası
-    </a>
+    <a asp-action="Create"class="btn btn-primary"> Yeni Trafik Cezası</a>
 </div>
 
-@if (TempData["Success"] is not null)
-{
-    <div class="alert alert-success">
-        @TempData["Success"]
-    </div>
-}
+
 
 @if (Model.Count == 0)
 {
@@ -27,54 +20,78 @@
 }
 else
 {
-    <table class="table table-striped table-hover">
+    <div class="accordion" id="vehicleAccordion">
 
-        <thead>
-            <tr>
-                <th>Plaka</th>
-                <th>Tutar</th>
-                <th>Ceza Tarihi</th>
-                <th>Durum</th>
-                <th>İşlemler</th>
-            </tr>
-        </thead>
+        @foreach (var vehicle in Model)
+        {
+            var collapseId = $"vehicle-{vehicle.VehicleId}";
 
-        <tbody>
-            @foreach (var trafficFine in Model)
-            {
-                <tr>
-                    <td>
-                        @trafficFine.Plate
-                    </td>
+            <div class="accordion-item">
 
-                    <td>
-                        @trafficFine.Amount.ToString("N2") ₺
-                    </td>
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed"type="button"data-bs-toggle="collapse"data-bs-target="#@collapseId">
 
-                    <td>
-                        @trafficFine.FineDate.ToString("dd.MM.yyyy")
-                    </td>
+                        <strong class="me-3">@vehicle.Plate</strong>
 
-                    <td>
-                        @trafficFine.Status
-                    </td>
+                        <span class="text-muted">@vehicle.Brand @vehicle.Model· @vehicle.TrafficFines.Count ceza</span>
 
-                    <td>
-                        <a asp-action="Details"
-                           asp-route-id="@trafficFine.Id"
-                           class="btn btn-sm btn-info">
-                            Detay
-                        </a>
+                    </button>
+                </h2>
 
-                        <a asp-action="Edit"
-                           asp-route-id="@trafficFine.Id"
-                           class="btn btn-sm btn-warning">
-                            Düzenle
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
+                <div id="@collapseId"class="accordion-collapse collapse">
 
-    </table>
+                    <div class="accordion-body">
+
+                        <table class="table table-striped table-hover mb-0">
+
+                            <thead>
+                                <tr>
+                                    <th>Tutar</th>
+                                    <th>Ceza Tarihi</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var trafficFine in vehicle.TrafficFines)
+                                {
+                                    <tr>
+
+                                        <td>
+                                            @trafficFine.Amount.ToString("N2") ₺
+                                        </td>
+                                        <td>
+                                            @trafficFine.FineDate.ToString("dd.MM.yyyy")
+                                        </td>
+                                        <td>
+                                            @trafficFine.Status
+                                        </td>
+
+                                        <td>
+
+                                            <a asp-action="Details"asp-route-id="@trafficFine.Id"class="btn btn-sm btn-info">Detay</a>
+
+                                            @if (trafficFine.Status ==TrafficFineSystem.Data.Enums.FineStatus.New)
+                                            {
+                                                <a asp-action="Edit"asp-route-id="@trafficFine.Id"class="btn btn-sm btn-warning">Düzenle</a>
+                                            }
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                </div>
+
+            </div>
+        }
+
+    </div>
 }

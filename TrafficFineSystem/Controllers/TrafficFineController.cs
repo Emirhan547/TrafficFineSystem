@@ -1,14 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TrafficFineSystem.Dtos.TrafficFineDtos;
 using TrafficFineSystem.Services.TrafficFineServices;
 
 namespace TrafficFineSystem.Controllers
 {
+    [Authorize]
     public class TrafficFineController : Controller
     {
         private readonly ITrafficFineService _trafficFineService;
 
-        public TrafficFineController(ITrafficFineService trafficFineService)
+        public TrafficFineController(
+            ITrafficFineService trafficFineService)
         {
             _trafficFineService = trafficFineService;
         }
@@ -16,86 +19,44 @@ namespace TrafficFineSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var trafficFines = await _trafficFineService.GetAllAsync();
-
+            var trafficFines = await _trafficFineService.GetAllGroupedAsync();
             return View(trafficFines);
         }
+
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var vehicles = await _trafficFineService.GetVehiclesAsync();
-
-            ViewBag.Vehicles = vehicles;
-
+            ViewBag.Vehicles =await _trafficFineService.GetVehiclesAsync();
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(
-      CreateTrafficFineDto dto)
+        public async Task<IActionResult> Create(CreateTrafficFineDto dto)
         {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Vehicles =
-                    await _trafficFineService.GetVehiclesAsync();
-
-                return View(dto);
-            }
-
             await _trafficFineService.CreateAsync(dto);
-
-            TempData["Success"] =
-                "Trafik cezası başarıyla oluşturuldu.";
 
             return RedirectToAction(nameof(Index));
         }
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var trafficFine =
-                await _trafficFineService.GetForUpdateAsync(id);
-
-            if (trafficFine is null)
-                return NotFound();
-
-            ViewBag.Vehicles =
-                await _trafficFineService.GetVehiclesAsync();
-
+            var trafficFine =await _trafficFineService.GetForUpdateAsync(id);
+            ViewBag.Vehicles =await _trafficFineService.GetVehiclesAsync();
             return View(trafficFine);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(
-    UpdateTrafficFineDto dto)
+        public async Task<IActionResult> Edit(UpdateTrafficFineDto dto)
         {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Vehicles =
-                    await _trafficFineService.GetVehiclesAsync();
-
-                return View(dto);
-            }
-
-            var result =
-                await _trafficFineService.UpdateAsync(dto);
-
-            if (!result)
-                return NotFound();
-
-            TempData["Success"] =
-                "Trafik cezası başarıyla güncellendi.";
-
+            await _trafficFineService.UpdateAsync(dto);
             return RedirectToAction(nameof(Index));
         }
+
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var trafficFine =
-                await _trafficFineService.GetByIdAsync(id);
-
-            if (trafficFine is null)
-                return NotFound();
-
+            var trafficFine = await _trafficFineService.GetByIdAsync(id);
             return View(trafficFine);
         }
     }

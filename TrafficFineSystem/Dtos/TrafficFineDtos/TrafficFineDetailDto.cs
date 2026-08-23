@@ -8,17 +8,17 @@ namespace TrafficFineSystem.Dtos.TrafficFineDtos
 
         public int VehicleId { get; set; }
 
-        public string Plate { get; set; } = null!;
+        public string Plate { get; set; } 
 
-        public string Brand { get; set; } = null!;
+        public string Brand { get; set; } 
 
-        public string Model { get; set; } = null!;
+        public string Model { get; set; } 
 
         public decimal Amount { get; set; }
 
         public DateTime FineDate { get; set; }
 
-        public string Description { get; set; } = null!;
+        public string Description { get; set; } 
 
         public FineStatus Status { get; set; }
     }

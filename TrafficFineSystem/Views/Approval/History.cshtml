@@ -1,4 +1,5 @@
-﻿@model List<TrafficFineSystem.Dtos.ApprovalHistoryDtos.ApprovalHistoryDto>
+﻿
+@model List<ApprovalHistoryDto>
 
 @{
     ViewData["Title"] = "Onay Geçmişi";
@@ -7,11 +8,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Onay Geçmişi</h2>
 
-    <a asp-controller="TrafficFine"
-       asp-action="Index"
-       class="btn btn-secondary">
-        Trafik Cezalarına Dön
-    </a>
+    <a asp-controller="TrafficFine" asp-action="Index"class="btn btn-secondary">Trafik Cezalarına Dön</a>
 </div>
 
 @if (Model.Count == 0)

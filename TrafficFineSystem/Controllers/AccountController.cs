@@ -22,15 +22,8 @@ namespace TrafficFineSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginDto dto)
         {
-            if (!ModelState.IsValid)return View(dto);
-
+           
             var result =await _accountService.LoginAsync(dto);
-
-            if (!result)
-            {
-                ModelState.AddModelError(string.Empty,"Email veya şifre hatalı.");
-                return View(dto);
-            }
             return RedirectToAction( "Index","Vehicle");
         }
 

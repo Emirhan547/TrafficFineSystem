@@ -3,100 +3,55 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TrafficFineSystem.Dtos.ApprovalHistoryDtos;
 using TrafficFineSystem.Services.ApprovalHistoryServices;
-using TrafficFineSystem.Services.TrafficFineServices;
 
 namespace TrafficFineSystem.Controllers
 {
+    [Authorize(Roles = "Manager,Finance")]
     public class ApprovalController : Controller
     {
-        private readonly IApprovalHistoryService _approvalService;
-        private readonly ITrafficFineService _trafficFineService;
-        public ApprovalController(
-            IApprovalHistoryService approvalService, ITrafficFineService trafficFineService)
+        private readonly IApprovalService _approvalService;
+
+        public ApprovalController(IApprovalService approvalService)
         {
             _approvalService = approvalService;
-            _trafficFineService = trafficFineService;
         }
+
         [HttpGet]
-        [Authorize(Roles = "Manager,Finance")]
         public async Task<IActionResult> Index()
         {
-            var trafficFines =
-                await _approvalService.GetAllTrafficFinesAsync();
-
+            var trafficFines =await _approvalService.GetAllGroupedAsync();
             return View(trafficFines);
         }
 
         [HttpGet]
-        [Authorize(Roles = "Manager,Finance")]
         public async Task<IActionResult> History(int trafficFineId)
         {
-            var histories =
-                await _approvalService.GetHistoryAsync(trafficFineId);
-
+            var histories =await _approvalService.GetHistoryAsync(trafficFineId);
             return View(histories);
         }
 
         [HttpPost]
-        [Authorize(Roles = "Manager,Finance")]
-        public async Task<IActionResult> Approve(ApprovalDto dto)
+        public async Task<IActionResult> Approve(ApproveTrafficFineDto dto)
         {
-            if (!ModelState.IsValid)
-                return RedirectToAction(
-                    "Details",
-                    "TrafficFine",
-                    new { id = dto.TrafficFineId });
 
-            var userId =
-                int.Parse(
-                    User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var userId =int.Parse( User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var role = User.IsInRole("Manager")? "Manager": "Finance";
+            var result = await _approvalService.ApproveAsync(dto,userId,role);
 
-            var result =
-                await _approvalService.ApproveAsync(
-                    dto,
-                    userId);
-
-            if (!result)
-                return NotFound();
-
-            TempData["Success"] =
-                "Onay işlemi başarıyla gerçekleştirildi.";
-
-            return RedirectToAction(
-                "Details",
-                "TrafficFine",
-                new { id = dto.TrafficFineId });
+            return RedirectToAction("Details","TrafficFine",new { id = dto.TrafficFineId });
         }
 
         [HttpPost]
-        [Authorize(Roles = "Manager,Finance")]
-        public async Task<IActionResult> Reject(ApprovalDto dto)
+        public async Task<IActionResult> Reject( RejectTrafficFineDto dto)
         {
-            if (!ModelState.IsValid)
-                return RedirectToAction(
-                    "Details",
-                    "TrafficFine",
-                    new { id = dto.TrafficFineId });
+           
+            var userId =int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
-            var userId =
-                int.Parse(
-                    User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var role = User.IsInRole("Manager")? "Manager": "Finance";
 
-            var result =
-                await _approvalService.RejectAsync(
-                    dto,
-                    userId);
+            var result =await _approvalService.RejectAsync(dto,userId,role);
 
-            if (!result)
-                return NotFound();
-
-            TempData["Success"] =
-                "Ceza reddedildi.";
-
-            return RedirectToAction(
-                "Details",
-                "TrafficFine",
-                new { id = dto.TrafficFineId });
+            return RedirectToAction( "Details","TrafficFine",new { id = dto.TrafficFineId });
         }
     }
 }

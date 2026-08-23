@@ -4,9 +4,9 @@ using TrafficFineSystem.Data.Repositories.GenericRepositories;
 
 namespace TrafficFineSystem.Data.Repositories.ApprovalHistoryRepositories
 {
-    public class ApprovalHistoryRepository : GenericRepository<ApprovalHistory>,IApprovalHistoryRepository
+    public class ApprovalRepository : GenericRepository<ApprovalHistory>, IApprovalRepository
     {
-        public ApprovalHistoryRepository(AppDbContext context): base(context)
+        public ApprovalRepository(AppDbContext context): base(context)
         {
         }
         public async Task<List<ApprovalHistory>> GetByTrafficFineIdAsync(int trafficFineId)

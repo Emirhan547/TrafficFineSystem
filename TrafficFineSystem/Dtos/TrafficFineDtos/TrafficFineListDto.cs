@@ -6,7 +6,7 @@ namespace TrafficFineSystem.Dtos.TrafficFineDtos
     {
         public int Id { get; set; }
 
-        public string Plate { get; set; } = null!;
+        public string Plate { get; set; } 
 
         public decimal Amount { get; set; }
 
