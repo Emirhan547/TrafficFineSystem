@@ -16,6 +16,7 @@ namespace TrafficFineSystem.Data.Repositories.GenericRepositories
         public async Task AddAsync(TEntity entity)
         {
             await _dbSet.AddAsync(entity);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
@@ -23,9 +24,10 @@ namespace TrafficFineSystem.Data.Repositories.GenericRepositories
             return await _dbSet.AnyAsync(predicate);
         }
 
-        public void Delete(TEntity entity)
+        public async Task Delete(TEntity entity)
         {
             _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<List<TEntity>> GetAllAsync()
@@ -38,9 +40,10 @@ namespace TrafficFineSystem.Data.Repositories.GenericRepositories
             return await _dbSet.FindAsync(id);
         }
 
-        public void Update(TEntity entity)
+        public async Task Update(TEntity entity)
         {
             _dbSet.Update(entity);
+            await _context.SaveChangesAsync();
         }
     }
 }

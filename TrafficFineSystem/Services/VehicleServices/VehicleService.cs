@@ -7,11 +7,11 @@ namespace TrafficFineSystem.Services.VehicleServices
 {
     public class VehicleService : IVehicleService
     {
-        private readonly AppDbContext _context;
+       
         private readonly IVehicleRepository _vehicleRepository;
-        public VehicleService(AppDbContext context, IVehicleRepository vehicleRepository)
+        public VehicleService( IVehicleRepository vehicleRepository)
         {
-            _context = context;
+           
             _vehicleRepository = vehicleRepository;
         }
 
@@ -34,7 +34,7 @@ namespace TrafficFineSystem.Services.VehicleServices
 
             await _vehicleRepository.AddAsync(vehicle);
 
-            await _context.SaveChangesAsync();
+           
         }
 
         public async Task<List<VehicleListDto>> GetAllAsync()
@@ -107,9 +107,7 @@ namespace TrafficFineSystem.Services.VehicleServices
             vehicle.Brand = dto.Brand;
             vehicle.Model = dto.Model;
 
-            _vehicleRepository.Update(vehicle);
-
-            await _context.SaveChangesAsync();
+            _vehicleRepository.Update(vehicle);    
 
             return true;
         }
