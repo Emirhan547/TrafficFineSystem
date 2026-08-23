@@ -1,4 +1,5 @@
 ﻿using TrafficFineSystem.Data.Entities;
+using TrafficFineSystem.Data.Enums;
 using TrafficFineSystem.Data.Repositories.GenericRepositories;
 
 namespace TrafficFineSystem.Data.Repositories.TrafficFineRepositories
@@ -7,5 +8,6 @@ namespace TrafficFineSystem.Data.Repositories.TrafficFineRepositories
     {
         Task<List<TrafficFine>> GetAllWithVehiclesAsync();
         Task<TrafficFine?> GetByIdWithVehicleAsync(int id);
+        Task<List<TrafficFine>> GetPendingApprovalsAsync(FineStatus status);
     }
 }

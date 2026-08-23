@@ -1,10 +1,10 @@
-﻿@model TrafficFineDetailDto
+﻿@model VehicleListDto
 
 @{
-    ViewData["Title"] = "Trafik Cezası Detayı";
+    ViewData["Title"] = "Araç Detayı";
 }
 
-<h2>Trafik Cezası Detayı</h2>
+<h2>Araç Detayı</h2>
 
 <div class="card">
     <div class="card-body">
@@ -17,6 +17,14 @@
 
             <dd class="col-sm-9">
                 @Model.Plate
+            </dd>
+
+            <dt class="col-sm-3">
+                Araç Tipi
+            </dt>
+
+            <dd class="col-sm-9">
+                @Model.VehicleType
             </dd>
 
             <dt class="col-sm-3">
@@ -33,38 +41,6 @@
 
             <dd class="col-sm-9">
                 @Model.Model
-            </dd>
-
-            <dt class="col-sm-3">
-                Ceza Tutarı
-            </dt>
-
-            <dd class="col-sm-9">
-                @Model.Amount.ToString("N2") ₺
-            </dd>
-
-            <dt class="col-sm-3">
-                Ceza Tarihi
-            </dt>
-
-            <dd class="col-sm-9">
-                @Model.FineDate.ToString("dd.MM.yyyy")
-            </dd>
-
-            <dt class="col-sm-3">
-                Durum
-            </dt>
-
-            <dd class="col-sm-9">
-                @Model.Status
-            </dd>
-
-            <dt class="col-sm-3">
-                Açıklama
-            </dt>
-
-            <dd class="col-sm-9">
-                @Model.Description
             </dd>
 
         </dl>

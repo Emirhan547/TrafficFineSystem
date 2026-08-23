@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TrafficFineSystem.Data.Entities;
+using TrafficFineSystem.Data.Enums;
 using TrafficFineSystem.Data.Repositories.GenericRepositories;
 
 namespace TrafficFineSystem.Data.Repositories.TrafficFineRepositories
@@ -22,6 +23,14 @@ namespace TrafficFineSystem.Data.Repositories.TrafficFineRepositories
             return await _dbSet
                 .Include(x => x.Vehicle)
                 .FirstOrDefaultAsync(x => x.Id == id);
+        }
+        public async Task<List<TrafficFine>> GetPendingApprovalsAsync(
+    FineStatus status)
+        {
+            return await _dbSet
+                .Include(x => x.Vehicle)
+                .Where(x => x.Status == status)
+                .ToListAsync();
         }
     }
 }

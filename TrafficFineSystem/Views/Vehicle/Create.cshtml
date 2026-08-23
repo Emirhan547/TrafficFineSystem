@@ -1,12 +1,10 @@
-﻿@model CreateTrafficFineDto
+﻿@model CreateVehicleDto
 
 @{
-    ViewData["Title"] = "Yeni Trafik Cezası";
-
-    var vehicles =ViewBag.Vehicles as List<VehicleListDto>;
+    ViewData["Title"] = "Yeni Araç";
 }
 
-<h2>Yeni Trafik Cezası</h2>
+<h2>Yeni Araç</h2>
 
 <form asp-action="Create" method="post">
 
@@ -15,78 +13,59 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="VehicleId"
-               class="form-label">
-            Araç
+        <label asp-for="Plate" class="form-label">
+            Plaka
         </label>
 
-        <select asp-for="VehicleId"
-                class="form-select">
+        <input asp-for="Plate"
+               class="form-control" />
 
-            <option value="0">
-                Araç seçiniz
-            </option>
+        <span asp-validation-for="Plate"
+              class="text-danger">
+        </span>
+    </div>
 
-            @if (vehicles is not null)
-            {
-                foreach (var vehicle in vehicles)
-                {
-                    <option value="@vehicle.Id">
-                        @vehicle.Plate -
-                        @vehicle.Brand @vehicle.Model
-                    </option>
-                }
-            }
+    <div class="mb-3">
+        <label asp-for="VehicleType"
+               class="form-label">
+            Araç Tipi
+        </label>
 
+        <select asp-for="VehicleType"
+                class="form-select"
+                asp-items="Html.GetEnumSelectList<TrafficFineSystem.Data.Enums.VehicleType>()">
+            <option value="">Araç tipi seçiniz</option>
         </select>
 
-        <span asp-validation-for="VehicleId"
+        <span asp-validation-for="VehicleType"
               class="text-danger">
         </span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Amount"
+        <label asp-for="Brand"
                class="form-label">
-            Ceza Tutarı
+            Marka
         </label>
 
-        <input asp-for="Amount"
-               type="number"
-               step="0.01"
+        <input asp-for="Brand"
                class="form-control" />
 
-        <span asp-validation-for="Amount"
+        <span asp-validation-for="Brand"
               class="text-danger">
         </span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="FineDate"
+        <label asp-for="Model"
                class="form-label">
-            Ceza Tarihi
+            Model
         </label>
 
-        <input asp-for="FineDate"
-               type="date"
+        <input asp-for="Model"
                class="form-control" />
 
-        <span asp-validation-for="FineDate"
-              class="text-danger">
-        </span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Description"
-               class="form-label">
-            Açıklama
-        </label>
-
-        <textarea asp-for="Description"
-                  class="form-control"
-                  rows="4"></textarea>
-
-        <span asp-validation-for="Description"
+        <span asp-validation-for="Model"
               class="text-danger">
         </span>
     </div>

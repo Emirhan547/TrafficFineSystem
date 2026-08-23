@@ -1,46 +1,43 @@
-﻿@model VehicleListDto
+﻿@model TrafficFineSystem.Dtos.TrafficFineDtos.TrafficFineDetailDto
 
 @{
-    ViewData["Title"] = "Araç Detayı";
+    ViewData["Title"] = "Trafik Cezası Detayı";
 }
 
-<h2>Araç Detayı</h2>
+<h2>Trafik Cezası Detayı</h2>
 
 <div class="card">
     <div class="card-body">
 
         <dl class="row">
 
-            <dt class="col-sm-3">
-                Plaka
-            </dt>
+            <dt class="col-sm-3">Plaka</dt>
+            <dd class="col-sm-9">@Model.Plate</dd>
 
+            <dt class="col-sm-3">Marka</dt>
+            <dd class="col-sm-9">@Model.Brand</dd>
+
+            <dt class="col-sm-3">Model</dt>
+            <dd class="col-sm-9">@Model.Model</dd>
+
+            <dt class="col-sm-3">Ceza Tutarı</dt>
             <dd class="col-sm-9">
-                @Model.Plate
+                @Model.Amount.ToString("N2") ₺
             </dd>
 
-            <dt class="col-sm-3">
-                Araç Tipi
-            </dt>
-
+            <dt class="col-sm-3">Ceza Tarihi</dt>
             <dd class="col-sm-9">
-                @Model.VehicleType
+                @Model.FineDate.ToString("dd.MM.yyyy")
             </dd>
 
-            <dt class="col-sm-3">
-                Marka
-            </dt>
-
+            <dt class="col-sm-3">Durum</dt>
             <dd class="col-sm-9">
-                @Model.Brand
+                @Model.Status
             </dd>
 
-            <dt class="col-sm-3">
-                Model
-            </dt>
-
+            <dt class="col-sm-3">Açıklama</dt>
             <dd class="col-sm-9">
-                @Model.Model
+                @Model.Description
             </dd>
 
         </dl>
@@ -55,6 +52,149 @@
            class="btn btn-secondary">
             Listeye Dön
         </a>
+
+        <a asp-controller="Approval"
+           asp-action="History"
+           asp-route-trafficFineId="@Model.Id"
+           class="btn btn-outline-secondary">
+            Onay Geçmişi
+        </a>
+
+    </div>
+</div>
+
+@if (User.IsInRole("Manager") &&
+     Model.Status == TrafficFineSystem.Data.Enums.FineStatus.New)
+{
+    <div class="card mt-4">
+        <div class="card-body">
+
+            <h5>Yönetici Onayı</h5>
+
+            <form asp-controller="Approval"
+                  asp-action="Approve"
+                  method="post"
+                  class="d-inline">
+
+                <input type="hidden"
+                       name="TrafficFineId"
+                       value="@Model.Id" />
+
+                <button type="submit"
+                        class="btn btn-success">
+                    Onayla
+                </button>
+
+            </form>
+
+            <button type="button"
+                    class="btn btn-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#rejectModal">
+                Reddet
+            </button>
+
+        </div>
+    </div>
+}
+
+@if (User.IsInRole("Finance") &&
+     Model.Status == TrafficFineSystem.Data.Enums.FineStatus.ManagerApproved)
+{
+    <div class="card mt-4">
+        <div class="card-body">
+
+            <h5>Finans Onayı</h5>
+
+            <form asp-controller="Approval"
+                  asp-action="Approve"
+                  method="post"
+                  class="d-inline">
+
+                <input type="hidden"
+                       name="TrafficFineId"
+                       value="@Model.Id" />
+
+                <button type="submit"
+                        class="btn btn-success">
+                    Onayla
+                </button>
+
+            </form>
+
+            <button type="button"
+                    class="btn btn-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#rejectModal">
+                Reddet
+            </button>
+
+        </div>
+    </div>
+}
+
+<div class="modal fade"
+     id="rejectModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Trafik Cezasını Reddet
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            <form asp-controller="Approval"
+                  asp-action="Reject"
+                  method="post">
+
+                <div class="modal-body">
+
+                    <input type="hidden"
+                           name="TrafficFineId"
+                           value="@Model.Id" />
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Ret Nedeni
+                        </label>
+
+                        <textarea name="Description"
+                                  class="form-control"
+                                  rows="4"></textarea>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Vazgeç
+                    </button>
+
+                    <button type="submit"
+                            class="btn btn-danger">
+                        Reddet
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
 
     </div>
 </div>
