@@ -3,7 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TrafficFineSystem.Data;
 using TrafficFineSystem.Data.Entities;
+using TrafficFineSystem.Data.Repositories.TrafficFineRepositories;
 using TrafficFineSystem.Data.Repositories.VehicleRepositories;
+using TrafficFineSystem.Extensions;
+using TrafficFineSystem.Services.AccountServices;
+using TrafficFineSystem.Services.TrafficFineServices;
 using TrafficFineSystem.Services.VehicleServices;
 using TrafficFineSystem.Validators.VehicleValidators;
 
@@ -22,11 +26,18 @@ builder.Services.AddIdentity<AppUser, IdentityRole<int>>(options =>
 }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<ITrafficFineRepository, TrafficFineRepository>();
+builder.Services.AddScoped<ITrafficFineService, TrafficFineService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateVehicleValidator>();
 var app = builder.Build();
-
+using (var scope = app.Services.CreateScope())
+{
+    await scope.ServiceProvider.SeedRolesAsync();
+    await scope.ServiceProvider.SeedUsersAsync();
+}
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
