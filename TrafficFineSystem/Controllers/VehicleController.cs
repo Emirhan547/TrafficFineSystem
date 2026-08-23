@@ -29,7 +29,14 @@ namespace TrafficFineSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateVehicleDto dto)
         {
-            await _vehicleService.CreateAsync(dto);
+            var result =await _vehicleService.CreateAsync(dto);
+
+            if (!result.IsSuccess)
+            {
+                TempData["Error"] = result.ErrorMessage;
+
+                return RedirectToAction(nameof(Index));
+            }   
             return RedirectToAction(nameof(Index));
         }
         [HttpGet]
@@ -41,8 +48,13 @@ namespace TrafficFineSystem.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Edit(UpdateVehicleDto dto)
-        {     
-            var result = await _vehicleService.UpdateAsync(dto);
+        {
+            var result =await _vehicleService.UpdateAsync(dto);
+            if (!result.IsSuccess)
+            {
+                TempData["Error"] = result.ErrorMessage;
+                return RedirectToAction(nameof(Index));
+            }
             return RedirectToAction(nameof(Index));
         }
         [HttpGet]

@@ -12,8 +12,8 @@ using TrafficFineSystem.Data;
 namespace TrafficFineSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260823151300_ChangeApprovalHistoryActionToEnum")]
-    partial class ChangeApprovalHistoryActionToEnum
+    [Migration("20260823225936_mig_initial")]
+    partial class mig_initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

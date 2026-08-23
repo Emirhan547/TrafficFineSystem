@@ -1,5 +1,6 @@
 ﻿using TrafficFineSystem.Dtos.TrafficFineDtos;
 using TrafficFineSystem.Dtos.VehicleDtos;
+using TrafficFineSystem.Services.Common;
 
 namespace TrafficFineSystem.Services.TrafficFineServices
 {
@@ -10,7 +11,7 @@ namespace TrafficFineSystem.Services.TrafficFineServices
         Task<UpdateTrafficFineDto?> GetForUpdateAsync(int id);
         Task<List<VehicleListDto>> GetVehiclesAsync();
         Task CreateAsync(CreateTrafficFineDto dto);
-        Task <bool>UpdateAsync(UpdateTrafficFineDto dto);
+        Task<ServiceResult> UpdateAsync(UpdateTrafficFineDto dto);
         Task<List<VehicleTrafficFineDto>> GetAllGroupedAsync();
     }
 }

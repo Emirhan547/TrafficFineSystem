@@ -1,28 +1,28 @@
-﻿using TrafficFineSystem.Data;
-using TrafficFineSystem.Data.Entities;
+﻿using TrafficFineSystem.Data.Entities;
 using TrafficFineSystem.Data.Repositories.VehicleRepositories;
 using TrafficFineSystem.Dtos.VehicleDtos;
+using TrafficFineSystem.Services.Common;
 
 namespace TrafficFineSystem.Services.VehicleServices
 {
     public class VehicleService : IVehicleService
     {
-       
         private readonly IVehicleRepository _vehicleRepository;
-        public VehicleService( IVehicleRepository vehicleRepository)
+
+        public VehicleService(IVehicleRepository vehicleRepository)
         {
-           
             _vehicleRepository = vehicleRepository;
         }
 
-        public async Task CreateAsync(CreateVehicleDto dto)
+        public async Task<ServiceResult> CreateAsync(CreateVehicleDto dto)
         {
             var plateExists =await _vehicleRepository.PlateExistsAsync(dto.Plate);
 
             if (plateExists)
             {
-                throw new InvalidOperationException("Bu plakaya sahip bir araç zaten mevcut.");
-            } 
+                return ServiceResult.Failure("Bu plakaya sahip bir araç zaten mevcut.");
+            }
+
             var vehicle = new Vehicle
             {
                 Plate = dto.Plate,
@@ -30,14 +30,15 @@ namespace TrafficFineSystem.Services.VehicleServices
                 Brand = dto.Brand,
                 Model = dto.Model
             };
-            await _vehicleRepository.AddAsync(vehicle);
 
-           
+            await _vehicleRepository.AddAsync(vehicle);
+            return ServiceResult.Success();
         }
 
         public async Task<List<VehicleListDto>> GetAllAsync()
         {
-            var vehicles = await _vehicleRepository.GetAllAsync();
+            var vehicles =await _vehicleRepository.GetAllAsync();
+
             return vehicles.Select(vehicle => new VehicleListDto
             {
                 Id = vehicle.Id,
@@ -50,7 +51,7 @@ namespace TrafficFineSystem.Services.VehicleServices
 
         public async Task<VehicleListDto?> GetByIdAsync(int id)
         {
-            var vehicle = await _vehicleRepository.GetByIdAsync(id);
+            var vehicle =await _vehicleRepository.GetByIdAsync(id);   
 
             return new VehicleListDto
             {
@@ -64,7 +65,7 @@ namespace TrafficFineSystem.Services.VehicleServices
 
         public async Task<UpdateVehicleDto?> GetForUpdateAsync(int id)
         {
-            var vehicle = await _vehicleRepository.GetByIdAsync(id);
+            var vehicle =await _vehicleRepository.GetByIdAsync(id);
 
             return new UpdateVehicleDto
             {
@@ -76,7 +77,7 @@ namespace TrafficFineSystem.Services.VehicleServices
             };
         }
 
-        public async Task<bool> UpdateAsync(UpdateVehicleDto dto)
+        public async Task<ServiceResult> UpdateAsync( UpdateVehicleDto dto)
         {
             var vehicle =await _vehicleRepository.GetByIdAsync(dto.Id);
 
@@ -84,16 +85,17 @@ namespace TrafficFineSystem.Services.VehicleServices
 
             if (plateExists)
             {
-                throw new InvalidOperationException("Bu plakaya sahip başka bir araç zaten mevcut.");
-            }             
+                return ServiceResult.Failure("Bu plakaya sahip başka bir araç zaten mevcut.");
+            }
+
             vehicle.Plate = dto.Plate;
             vehicle.VehicleType = dto.VehicleType;
             vehicle.Brand = dto.Brand;
             vehicle.Model = dto.Model;
 
-            _vehicleRepository.Update(vehicle);    
+            _vehicleRepository.Update(vehicle);
 
-            return true;
+            return ServiceResult.Success();
         }
     }
 }

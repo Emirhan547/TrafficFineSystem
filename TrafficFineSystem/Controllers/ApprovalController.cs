@@ -33,25 +33,40 @@ namespace TrafficFineSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Approve(ApproveTrafficFineDto dto)
         {
-
             var userId =int.Parse( User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            var role = User.IsInRole("Manager")? "Manager": "Finance";
-            var result = await _approvalService.ApproveAsync(dto,userId,role);
+            var role =User.IsInRole("Manager")? "Manager": "Finance";
+            var result =await _approvalService.ApproveAsync( dto,userId,role);
 
-            return RedirectToAction("Details","TrafficFine",new { id = dto.TrafficFineId });
+            if (!result.IsSuccess)
+            {
+                TempData["Error"] = result.ErrorMessage;
+
+                return RedirectToAction("Details","TrafficFine",
+                    new { id = dto.TrafficFineId });
+            }
+
+            return RedirectToAction("Details","TrafficFine",
+                new { id = dto.TrafficFineId });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Reject( RejectTrafficFineDto dto)
+        public async Task<IActionResult> Reject(RejectTrafficFineDto dto)
         {
-           
             var userId =int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-
-            var role = User.IsInRole("Manager")? "Manager": "Finance";
+            var role =User.IsInRole("Manager")? "Manager": "Finance";
 
             var result =await _approvalService.RejectAsync(dto,userId,role);
 
-            return RedirectToAction( "Details","TrafficFine",new { id = dto.TrafficFineId });
+            if (!result.IsSuccess)
+            {
+                TempData["Error"] = result.ErrorMessage;
+
+                return RedirectToAction("Details","TrafficFine",
+                    new { id = dto.TrafficFineId });
+            }
+
+            return RedirectToAction( "Details","TrafficFine",
+                new { id = dto.TrafficFineId });
         }
     }
 }

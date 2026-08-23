@@ -49,7 +49,13 @@ namespace TrafficFineSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(UpdateTrafficFineDto dto)
         {
-            await _trafficFineService.UpdateAsync(dto);
+            var result = await _trafficFineService.UpdateAsync(dto);
+
+            if (!result.IsSuccess)
+            {
+                TempData["Error"] = result.ErrorMessage;
+                return RedirectToAction(nameof(Index));
+            }   
             return RedirectToAction(nameof(Index));
         }
 

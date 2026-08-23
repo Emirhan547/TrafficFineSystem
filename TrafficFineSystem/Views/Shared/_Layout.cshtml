@@ -108,11 +108,26 @@
         </nav>
     </header>
 
-    <main class="container py-4">
+   <main class="container py-4">
 
-        @RenderBody()
+   
 
-    </main>
+    @if (TempData["Error"] is not null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Kapat">
+            </button>
+        </div>
+    }
+
+    @RenderBody()
+
+</main>
 
     <footer class="border-top text-muted py-3">
         <div class="container">

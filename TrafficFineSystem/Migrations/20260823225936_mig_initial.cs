@@ -205,7 +205,7 @@ namespace TrafficFineSystem.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TrafficFineId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    Action = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Action = table.Column<int>(type: "int", nullable: false),
                     PreviousStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NewStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),

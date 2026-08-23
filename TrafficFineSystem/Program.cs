@@ -10,10 +10,13 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 var app = builder.Build();
+
+
 using (var scope = app.Services.CreateScope())
 {
     await scope.ServiceProvider.SeedRolesAsync();
     await scope.ServiceProvider.SeedUsersAsync();
+    await scope.ServiceProvider.SeedDataAsync();
 }
 if (!app.Environment.IsDevelopment())
 {
